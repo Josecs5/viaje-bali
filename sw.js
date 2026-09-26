@@ -5,7 +5,7 @@
  */
 'use strict';
 
-const SHELL_CACHE = 'shell-v1';
+const SHELL_CACHE = 'shell-v2';
 // Solo se tocan las cachés de este proyecto: en GitHub Pages el origen es
 // compartido con otros proyectos del usuario y caches.keys() no está acotado
 // por scope.
@@ -14,8 +14,8 @@ const OWNED_CACHE = /^shell-v\d+$/;
 const SHELL_ASSETS = [
   './',                       // redundante a propósito (red de seguridad);
   './index.html',             // la navegación resuelve contra './index.html'.
-  './style.css?v=1',
-  './app.js?v=1',
+  './style.css?v=2',
+  './app.js?v=2',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png',
@@ -31,8 +31,9 @@ const SHELL_ASSETS = [
   './vendor/leaflet/images/layers-2x.png',
   './vendor/suncalc/suncalc.js',
   './vendor/fonts/fonts.css',
-  './vendor/fonts/fraunces-latin.woff2',
-  './vendor/fonts/inter-latin.woff2'
+  './vendor/fonts/instrument-serif-latin.woff2',
+  './vendor/fonts/instrument-serif-latin-italic.woff2',
+  './vendor/fonts/plus-jakarta-sans-latin.woff2'
 ];
 
 self.addEventListener('install', event => {

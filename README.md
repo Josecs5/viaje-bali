@@ -54,10 +54,10 @@ comer, espectáculos) se recalcula solo.
 | Archivo | Contenido |
 |---|---|
 | `index.html` | Estructura y meta tags PWA/iOS |
-| `style.css` | Tema tropical (arena, verde arrozal y turquesa), con modo claro y oscuro; responsive y autónomo |
+| `style.css` | Tema "atardecer en Bali" (marfil, laguna, coral hibisco, caléndula, arrozal y turquesa), con modo claro y oscuro; responsive y autónomo |
 | `app.js` | Lógica: CRUD, motor de itinerario, dónde comer, espectáculos, transporte y guías |
 | `sw.js` | Service worker: precache del shell |
-| `vendor/` | Leaflet 1.9.4, SunCalc 1.9.0 y fuentes web (Fraunces e Inter) servidos desde el repo |
+| `vendor/` | Leaflet 1.9.4, SunCalc 1.9.0 y fuentes web (Instrument Serif y Plus Jakarta Sans) servidos desde el repo |
 | `manifest.json` | Manifiesto PWA |
 | `icons/` | Iconos 192 / 512 / maskable + apple-touch-icon + SVG |
 
