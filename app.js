@@ -2944,8 +2944,14 @@
 
     if (st === 'fin') { box.hidden = true; box.classList.remove('is-live'); return; }
 
+    // Ficha de dos líneas: etiqueta pequeña arriba, cifra grande abajo
+    const ficha = (lbl, val) =>
+      `<span class="appbar__count-lbl">${esc(lbl)}</span><span class="appbar__count-val">${esc(val)}</span>`;
+
     if (st === 'curso') {
-      box.textContent = 'En curso · día ' + diaActual();
+      const { fechaInicio, fechaFin } = state.meta;
+      const total = fechaInicio && fechaFin ? eachDay(fechaInicio, fechaFin).length : 0;
+      box.innerHTML = ficha('En curso', 'Día ' + diaActual() + (total ? ' de ' + total : ''));
       box.title = 'El viaje está en marcha';
       box.classList.add('is-live');
       box.hidden = false;
@@ -2955,7 +2961,7 @@
     box.classList.remove('is-live');
     const s = countdownStr(firstDeparture());
     if (!s) { box.hidden = true; return; }
-    box.innerHTML = ICON.plane + '<span>' + esc(s) + '</span>';
+    box.innerHTML = ficha('Despegas en', s);
     const dp = dtParts(firstDeparture());
     box.title = dp.date ? `Salida del vuelo: ${fmtFecha(dp.date, true)}, ${dp.time}` : 'Cuenta atrás para el viaje';
     box.hidden = false;
