@@ -2543,7 +2543,7 @@
     const ll = stops.map(a => [a.loc.lat, a.loc.lng]);
     // Carretera: asfalto de tinta con su línea central, como en el itinerario
     L.polyline(ll, { weight: 7, lineCap: 'round', lineJoin: 'round', className: 'map-road', interactive: false }).addTo(map);
-    L.polyline(ll, { color: '#FFC38F', weight: 2, dashArray: '2 9', lineCap: 'round', interactive: false }).addTo(map);
+    L.polyline(ll, { color: '#F9C74F', weight: 2, dashArray: '2 9', lineCap: 'round', interactive: false }).addTo(map);
     // Etiquetas hacia fuera (las de más al oeste a la izquierda) y solo una
     // fija por grupo de paradas cercanas: las demás salen al tocar la chapa.
     const lngMedia = stops.reduce((s, a) => s + a.loc.lng, 0) / stops.length;
@@ -2983,7 +2983,7 @@
      dibuja el botón, se guarda la elección y, mientras no haya elección
      propia, se sigue el tema del sistema.
      ========================================================== */
-  const TEMA_COLOR = { light: '#0F3438', dark: '#081E22' };
+  const TEMA_COLOR = { light: '#173A2A', dark: '#0F2A1E' };
   const temaActual = () => document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
   const temaGuardado = () => { try { return localStorage.getItem('tema'); } catch (e) { return null; } };
 

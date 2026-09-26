@@ -9,7 +9,7 @@
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0F3438">
+  <meta name="theme-color" content="#173A2A">
   <meta name="color-scheme" content="light dark">
 
   <!-- Tema: se fija antes de pintar para que no parpadee (guardado o el del sistema) -->
@@ -19,7 +19,7 @@
       try { t = localStorage.getItem('tema'); } catch (e) {}
       if (t !== 'claro' && t !== 'oscuro') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'oscuro' : 'claro';
       document.documentElement.dataset.theme = t === 'oscuro' ? 'dark' : 'light';
-      document.querySelector('meta[name="theme-color"]').content = t === 'oscuro' ? '#081E22' : '#0F3438';
+      document.querySelector('meta[name="theme-color"]').content = t === 'oscuro' ? '#0F2A1E' : '#173A2A';
     })();
   </script>
 
@@ -41,7 +41,7 @@
   <!-- Leaflet (local) — mapas pequeños de la pestaña "Comer" -->
   <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
 
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
 
@@ -158,11 +158,11 @@
   <datalist id="gaz-list"></datalist>
 
   <noscript>
-    <p style="padding:24px;color:#16292D;font-family:sans-serif">Esta aplicación necesita JavaScript para funcionar.</p>
+    <p style="padding:24px;color:#1B2A1F;font-family:sans-serif">Esta aplicación necesita JavaScript para funcionar.</p>
   </noscript>
 
   <script src="vendor/leaflet/leaflet.js" defer></script>
   <script src="vendor/suncalc/suncalc.js" defer></script>
-  <script src="app.js?v=2" defer></script>
+  <script src="app.js?v=3" defer></script>
 </body>
 </html>
