@@ -309,10 +309,29 @@
   // pin inventado para templos y miradores menos conocidos.
   const gl = (texto, lat, lng) => (lat != null ? { texto, lat, lng } : { texto });
 
-  // Fotos: se deja vacío a propósito. Sin una URL de Wikimedia Commons
-  // verificada por sitio, es preferible no mostrar foto a arriesgarse a una
-  // imagen equivocada o rota.
-  const FOTO = {};
+  // Fotos: URLs directas de Wikimedia Commons (vía la API pageimages de
+  // Wikipedia y, si no había artículo propio, búsqueda en Commons), un
+  // archivo real y verificado por sitio en septiembre de 2026. Donde no se
+  // ha encontrado una foto fiable del sitio exacto (alojamientos privados,
+  // restaurantes concretos, mercados) se deja sin `foto` en vez de forzar
+  // una imagen que no sea la del sitio.
+  const FOTO = {
+    ubudPalace: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d8/Ubud_Palace_%282022%29.jpg/960px-Ubud_Palace_%282022%29.jpg',
+    tamanSaraswati: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/8/87/Pura_Taman_Saraswati_%282022%29_01.jpg/960px-Pura_Taman_Saraswati_%282022%29_01.jpg',
+    tegallalang: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8a/Rice_terraces%2C_Bali.jpg/960px-Rice_terraces%2C_Bali.jpg',
+    besakih: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4f/Besakih_Bali_Indonesia_Pura-Besakih-02.jpg/960px-Besakih_Bali_Indonesia_Pura-Besakih-02.jpg',
+    sidemen: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c2/RICE_TERRACE_OF_SIDEMEN_EAST_BALI.jpg/960px-RICE_TERRACE_OF_SIDEMEN_EAST_BALI.jpg',
+    campuhan: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3a/Campuhan_Ridge_Walk%2C_Ubud%2C_Bali%2C_20220822_1422_0140.jpg/960px-Campuhan_Ridge_Walk%2C_Ubud%2C_Bali%2C_20220822_1422_0140.jpg',
+    monkeyForest: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/4/46/Monkey_Forest.jpg/960px-Monkey_Forest.jpg',
+    kantoLampo: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ac/Kanto_lampo_waterfall.jpg/960px-Kanto_lampo_waterfall.jpg',
+    padangBai: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/0/07/Padangbai_harbour_2017-08-14_%282%29.jpg/960px-Padangbai_harbour_2017-08-14_%282%29.jpg',
+    giliAir: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ef/Gili_Air_Island_from_Gili_Meno_Island%2C_Indonesia.jpg/960px-Gili_Air_Island_from_Gili_Meno_Island%2C_Indonesia.jpg',
+    uluwatuTemple: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/Pura_Luhur_Uluwatu_2017-08-17_%2834%29.jpg/960px-Pura_Luhur_Uluwatu_2017-08-17_%2834%29.jpg',
+    bingin: 'https://upload.wikimedia.org/wikipedia/commons/a/ad/Bingin_Beach.PNG',
+    padangPadang: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f6/Padang_Padang_Beach_Bali.jpg/960px-Padang_Padang_Beach_Bali.jpg',
+    kecak: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2f/Kecak_dancers_cliffside_Uluwatu.jpg/960px-Kecak_dancers_cliffside_Uluwatu.jpg',
+    dpsAirport: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/Ngurah_Rai_Internasional_Airport_Welcome_Sign.jpg/960px-Ngurah_Rai_Internasional_Airport_Welcome_Sign.jpg'
+  };
 
   const EXC_SEED = [
     { id: 'seed-ex-traslado-llegada', nombre: 'Traslado al alojamiento en Ubud (theWakanda) y descanso', fecha: '2026-09-28', hora: '20:00', duracion: '',
@@ -331,7 +350,8 @@
       encuentro: { texto: 'Gili Air (embarcadero)', lat: -8.3557, lng: 116.0836 }, proveedor: '', reserva: '', notas: 'Prioridad: no convertir este día en otra excursión.' },
     { id: 'seed-ex-kecak', nombre: 'Kecak Dance con puesta de sol (Uluwatu Temple)', fecha: '2026-10-05', hora: '18:00', duracion: '60',
       encuentro: { texto: 'Uluwatu Temple', lat: -8.8291, lng: 115.0849 }, proveedor: '', reserva: '',
-      notas: 'Hay dos pases, uno a las 18:00 y otro a las 19:00; la entrada de la danza es aparte de la del templo. Reserva con unos días de antelación en temporada alta.' },
+      notas: 'Hay dos pases, uno a las 18:00 y otro a las 19:00; la entrada de la danza es aparte de la del templo. Reserva con unos días de antelación en temporada alta.',
+      foto: FOTO.kecak, desc: 'La danza Kecak: un coro de decenas de hombres en círculo, cantando «cak-cak-cak» sin instrumentos, con fuego y la puesta de sol sobre el acantilado de Uluwatu de fondo.' },
     { id: 'seed-ex-checkout-final', nombre: 'Recoger maletas y check-out', fecha: '2026-10-06', hora: '15:00', duracion: '',
       encuentro: {}, proveedor: '', reserva: '', notas: '' },
     { id: 'seed-ex-al-aeropuerto', nombre: 'Salida hacia el aeropuerto de Denpasar', fecha: '2026-10-06', hora: '16:00', duracion: '',
@@ -340,27 +360,37 @@
 
   const LUGAR_SEED = [
     // 29 sep — Día 1: Ubud tranquilo, primer contacto
-    { id: 'seed-lg-ubudpalace', nombre: 'Ubud Palace', loc: { texto: 'Ubud Palace (Puri Saren Agung)', lat: -8.5069, lng: 115.2625 }, fecha: '2026-09-29', hora: '12:00', visita: '45', prioridad: 'Alta', notas: '' },
-    { id: 'seed-lg-saraswati', nombre: 'Pura Taman Saraswati y paseo por el centro', loc: { texto: 'Pura Taman Saraswati, Ubud', lat: -8.5063, lng: 115.2617 }, fecha: '2026-09-29', hora: '12:45', visita: '45', prioridad: 'Media', notas: '' },
+    { id: 'seed-lg-ubudpalace', nombre: 'Ubud Palace', loc: { texto: 'Ubud Palace (Puri Saren Agung)', lat: -8.5069, lng: 115.2625 }, fecha: '2026-09-29', hora: '12:00', visita: '45', prioridad: 'Alta', notas: '',
+      foto: FOTO.ubudPalace, desc: 'Puri Saren Agung, el antiguo palacio real de Ubud, con danza tradicional balinesa varias noches por semana en su patio.' },
+    { id: 'seed-lg-saraswati', nombre: 'Pura Taman Saraswati y paseo por el centro', loc: { texto: 'Pura Taman Saraswati, Ubud', lat: -8.5063, lng: 115.2617 }, fecha: '2026-09-29', hora: '12:45', visita: '45', prioridad: 'Media', notas: '',
+      foto: FOTO.tamanSaraswati, desc: 'Templo del agua en pleno centro de Ubud, con un estanque de lotos delante de la puerta tallada.' },
     { id: 'seed-lg-ubudmarket', nombre: 'Ubud Market + callejeo, cafés y tiendas locales', loc: { texto: 'Ubud Market', lat: -8.5077, lng: 115.2624 }, fecha: '2026-09-29', hora: '15:00', visita: '120', prioridad: 'Media', notas: '' },
     { id: 'seed-lg-wakanda-tarde1', nombre: 'Regreso a Wakanda / tarde de piscina y descanso', loc: { texto: 'theWakanda A Pramana Experience, Kemenuh', lat: -8.5676, lng: 115.2905 }, fecha: '2026-09-29', hora: '17:00', visita: '', prioridad: 'Baja',
       notas: 'Idea del día: empezar a sentir Ubud, no «conquistarlo». Nada de correr, y cena tranquila sin obligarnos a añadir más cosas.' },
     // 30 sep — Día 2: Tegallalang · Besakih · Sidemen
     { id: 'seed-lg-tegallalang', nombre: 'Tegallalang Rice Terraces', loc: { texto: 'Tegallalang Rice Terraces', lat: -8.4312, lng: 115.2777 }, fecha: '2026-09-30', hora: '07:30', visita: '90', prioridad: 'Alta',
-      notas: 'Caminar por los arrozales y disfrutar del paisaje, evitando convertirlo en una parada de foto rápida.' },
+      notas: 'Caminar por los arrozales y disfrutar del paisaje, evitando convertirlo en una parada de foto rápida.',
+      foto: FOTO.tegallalang, desc: 'Arrozales en terrazas escalonadas al norte de Ubud, uno de los paisajes agrícolas más fotografiados de Bali.' },
     { id: 'seed-lg-besakih', nombre: 'Pura Besakih', loc: { texto: 'Pura Besakih', lat: -8.3742, lng: 115.4517 }, fecha: '2026-09-30', hora: '10:30', visita: '150', prioridad: 'Alta',
-      notas: 'El gran complejo de templos en las laderas del monte Agung.' },
+      notas: 'El gran complejo de templos en las laderas del monte Agung.',
+      foto: FOTO.besakih, desc: 'El templo madre de Bali: más de veinte santuarios escalonados por la ladera del volcán Agung, el más sagrado de la isla.' },
     { id: 'seed-lg-sidemen', nombre: 'Sidemen', loc: { texto: 'Sidemen', lat: -8.4167, lng: 115.4667 }, fecha: '2026-09-30', hora: '14:30', visita: '120', prioridad: 'Media',
-      notas: 'Arrozales, pueblo, paseo tranquilo y ambiente rural. Idea del día: paisaje agrícola → Bali espiritual → Bali rural. Nota: hemos dejado fuera Tirta Empul a propósito — no nos interesa la purificación y no queremos añadir una parada solo por la foto.' },
+      notas: 'Arrozales, pueblo, paseo tranquilo y ambiente rural. Idea del día: paisaje agrícola → Bali espiritual → Bali rural. Nota: hemos dejado fuera Tirta Empul a propósito — no nos interesa la purificación y no queremos añadir una parada solo por la foto.',
+      foto: FOTO.sidemen, desc: 'Valle de arrozales al este de Bali, con el monte Agung de fondo, mucho más tranquilo y menos visitado que Tegallalang.' },
     // 1 oct — Día 3: Campuhan · Monkey Forest · masaje
     { id: 'seed-lg-campuhan', nombre: 'Campuhan Ridge Walk', loc: { texto: 'Campuhan Ridge Walk', lat: -8.5030, lng: 115.2571 }, fecha: '2026-10-01', hora: '08:30', visita: '90', prioridad: 'Alta',
-      notas: 'Temprano para evitar el calor y disfrutar del paseo.' },
-    { id: 'seed-lg-monkeyforest', nombre: 'Sacred Monkey Forest Sanctuary', loc: { texto: 'Sacred Monkey Forest Sanctuary, Ubud', lat: -8.5188, lng: 115.2588 }, fecha: '2026-10-01', hora: '10:30', visita: '120', prioridad: 'Alta', notas: '' },
+      notas: 'Temprano para evitar el calor y disfrutar del paseo.',
+      foto: FOTO.campuhan, desc: 'Sendero elevado entre dos colinas cubiertas de hierba, a las afueras de Ubud, popular para pasear al amanecer.' },
+    { id: 'seed-lg-monkeyforest', nombre: 'Sacred Monkey Forest Sanctuary', loc: { texto: 'Sacred Monkey Forest Sanctuary, Ubud', lat: -8.5188, lng: 115.2588 }, fecha: '2026-10-01', hora: '10:30', visita: '120', prioridad: 'Alta', notas: '',
+      foto: FOTO.monkeyForest, desc: 'Bosque sagrado en el centro de Ubud, con varios templos hindúes entre los árboles y varios cientos de macacos de cola larga en libertad.' },
     { id: 'seed-lg-kantolampo', nombre: 'Kanto Lampo Waterfall (opcional)', loc: { texto: 'Kanto Lampo Waterfall', lat: -8.4649, lng: 115.3216 }, fecha: '2026-10-01', hora: '14:30', visita: '90', prioridad: 'Baja',
-      notas: 'Según energía y ganas — si obliga a ir con prisas, se elimina: el masaje y el descanso tienen prioridad.' },
+      notas: 'Según energía y ganas — si obliga a ir con prisas, se elimina: el masaje y el descanso tienen prioridad.',
+      foto: FOTO.kantoLampo, desc: 'Cascada escalonada sobre roca volcánica cerca de Ubud, con una piscina natural donde se puede bañar.' },
     // 2 oct — Día 4: Ubud → Gili Air
-    { id: 'seed-lg-padangbai', nombre: 'Llegada a Padang Bai y check-in', loc: { texto: 'Padang Bai', lat: -8.5309, lng: 115.5093 }, fecha: '2026-10-02', hora: '09:00', visita: '', prioridad: 'Media', notas: '' },
-    { id: 'seed-lg-llegadagili', nombre: 'Llegada a Gili Air', loc: { texto: 'Gili Air', lat: -8.3557, lng: 116.0836 }, fecha: '2026-10-02', hora: '12:20', visita: '', prioridad: 'Media', notas: '' },
+    { id: 'seed-lg-padangbai', nombre: 'Llegada a Padang Bai y check-in', loc: { texto: 'Padang Bai', lat: -8.5309, lng: 115.5093 }, fecha: '2026-10-02', hora: '09:00', visita: '', prioridad: 'Media', notas: '',
+      foto: FOTO.padangBai, desc: 'Pueblo pesquero y puerto en la costa este de Bali, punto de salida habitual de los fast boats hacia las islas Gili.' },
+    { id: 'seed-lg-llegadagili', nombre: 'Llegada a Gili Air', loc: { texto: 'Gili Air', lat: -8.3557, lng: 116.0836 }, fecha: '2026-10-02', hora: '12:20', visita: '', prioridad: 'Media', notas: '',
+      foto: FOTO.giliAir, desc: 'La más cercana a Bali y Lombok de las tres islas Gili: sin coches ni motos, arena blanca y aguas transparentes.' },
     { id: 'seed-lg-bicigili1', nombre: 'Primer paseo en bici + playa + snorkel/tortugas si apetece', loc: { texto: 'Gili Air', lat: -8.3557, lng: 116.0836 }, fecha: '2026-10-02', hora: '16:00', visita: '', prioridad: 'Media', notas: '' },
     { id: 'seed-lg-costagili', nombre: 'Paseo por la costa y cena', loc: { texto: 'Gili Air', lat: -8.3557, lng: 116.0836 }, fecha: '2026-10-02', hora: '18:30', visita: '', prioridad: 'Baja', notas: '' },
     // 3 oct — Día 5: Gili Air, mar y bicis
@@ -369,15 +399,19 @@
       notas: 'Este día está deliberadamente abierto: Gili Air se disfruta más cuando no hay que mirar el reloj.' },
     // 4 oct — Día 6: Gili Air → Uluwatu
     { id: 'seed-lg-checkinuluwatu', nombre: 'Check-in en Wira Homestay + piscina / descanso', loc: { texto: 'Wira Homestay, Pecatu', lat: -8.8167, lng: 115.1167 }, fecha: '2026-10-04', hora: '15:00', visita: '', prioridad: 'Media', notas: '' },
-    { id: 'seed-lg-acantilados1', nombre: 'Primer contacto con los acantilados o una playa cercana', loc: { texto: 'Acantilados de Uluwatu', lat: -8.8291, lng: 115.0849 }, fecha: '2026-10-04', hora: '18:00', visita: '', prioridad: 'Media', notas: '' },
+    { id: 'seed-lg-acantilados1', nombre: 'Primer contacto con los acantilados o una playa cercana', loc: { texto: 'Acantilados de Uluwatu', lat: -8.8291, lng: 115.0849 }, fecha: '2026-10-04', hora: '18:00', visita: '', prioridad: 'Media', notas: '',
+      foto: FOTO.bingin, desc: 'Acantilados de piedra caliza del Bukit, la península en el extremo sur de Bali, con playas escondidas al pie de la roca.' },
     // 5 oct — Día 7: Uluwatu, playas + templo + Kecak
     { id: 'seed-lg-playauluwatu', nombre: 'Playa: Padang Padang / Thomas Beach / Bingin, según apetezca', loc: { texto: 'Padang Padang Beach', lat: -8.8115, lng: 115.1088 }, fecha: '2026-10-05', hora: '09:00', visita: '', prioridad: 'Media',
-      notas: 'No hace falta visitar todas las playas — elegimos las que mejor encajen con el ritmo del día.' },
+      notas: 'No hace falta visitar todas las playas — elegimos las que mejor encajen con el ritmo del día.',
+      foto: FOTO.padangPadang, desc: 'Pequeña cala de arena blanca entre paredes de roca, una de las playas más conocidas del Bukit (salió en la película «Comer, rezar, amar»).' },
     { id: 'seed-lg-acantiladosuluwatu', nombre: 'Acantilados de Uluwatu', loc: { texto: 'Acantilados de Uluwatu', lat: -8.8291, lng: 115.0849 }, fecha: '2026-10-05', hora: '15:30', visita: '60', prioridad: 'Media', notas: '' },
-    { id: 'seed-lg-templouluwatu', nombre: 'Uluwatu Temple', loc: { texto: 'Pura Luhur Uluwatu', lat: -8.8291, lng: 115.0849 }, fecha: '2026-10-05', hora: '17:00', visita: '45', prioridad: 'Alta', notas: 'Antes del atardecer.' },
+    { id: 'seed-lg-templouluwatu', nombre: 'Uluwatu Temple', loc: { texto: 'Pura Luhur Uluwatu', lat: -8.8291, lng: 115.0849 }, fecha: '2026-10-05', hora: '17:00', visita: '45', prioridad: 'Alta', notas: 'Antes del atardecer.',
+      foto: FOTO.uluwatuTemple, desc: 'Uno de los seis grandes templos marinos de Bali, encaramado en un acantilado a 70 metros sobre el océano Índico.' },
     // 6 oct — Día 8: últimas horas, Bali → Madrid
     { id: 'seed-lg-ultimobano', nombre: 'Último baño / paseo / café', loc: { texto: 'Wira Homestay, Pecatu', lat: -8.8167, lng: 115.1167 }, fecha: '2026-10-06', hora: '11:00', visita: '', prioridad: 'Media', notas: '' },
     { id: 'seed-lg-aeropuertomargen', nombre: 'Llegada al aeropuerto con margen', loc: { texto: 'Aeropuerto de Denpasar (DPS)', lat: -8.7467, lng: 115.1667 }, fecha: '2026-10-06', hora: '18:00', visita: '', prioridad: 'Media',
+      foto: FOTO.dpsAirport,
       notas: 'Cierre: fin de una aventura. Y probablemente ya estaremos pensando en volver.' }
   ];
 
@@ -3210,7 +3244,7 @@
       lugares: [
         { nombre: 'Ubud Palace — danza tradicional', nota: 'Programa semanal: domingo Legong of Mahabharata · lunes Legong Dance · martes Bina Remaja Ramayana Ballet · miércoles Legong & Barong Dance · jueves Legong Trance Paradise · viernes Barong Dance Ubud · sábado Legong Dance.',
           dias: 'Cualquier noche de la estancia (28 sep – 1 oct) — mira qué programa cae cada día.', horario: '19:30.',
-          precio: 'Entrada ~100.000 IDR', loc: { lat: -8.5069, lng: 115.2625 }, desc: 'El escenario del propio Ubud Palace, en el centro de Ubud, con danza balinesa tradicional casi cada noche.' }
+          precio: 'Entrada ~100.000 IDR', loc: { lat: -8.5069, lng: 115.2625 }, foto: FOTO.ubudPalace, desc: 'El escenario del propio Ubud Palace, en el centro de Ubud, con danza balinesa tradicional casi cada noche.' }
       ] },
     { zona: 'Gili Air', fechas: '2 – 4 oct (2 noches)',
       intro: 'Gili Air no tiene escenarios formales de danza o teatro — las noches de la isla giran en torno a la puesta de sol en la playa y la cena, no a un espectáculo programado.',
@@ -3220,7 +3254,7 @@
       lugares: [
         { nombre: 'Kecak Fire & Trance Dance — Uluwatu Temple', nota: 'Dos pases cada tarde. La entrada de la danza es aparte de la del templo.',
           dias: 'Noche del día 7 (5 oct), que es cuando ya está en el itinerario.', horario: '18:00 y 19:00.',
-          precio: 'Entrada ~150.000 IDR adultos', loc: { lat: -8.8291, lng: 115.0849 }, desc: 'El Kecak con puesta de sol sobre el mar, en el anfiteatro del templo de Uluwatu — el espectáculo más icónico del sur de Bali.' }
+          precio: 'Entrada ~150.000 IDR adultos', loc: { lat: -8.8291, lng: 115.0849 }, foto: FOTO.kecak, desc: 'El Kecak con puesta de sol sobre el mar, en el anfiteatro del templo de Uluwatu — el espectáculo más icónico del sur de Bali.' }
       ] }
   ];
 
