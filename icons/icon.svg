@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <title>Viaje a Bali</title>
+  <rect width="100" height="100" rx="22" fill="#1F3B2D"/>
+  <circle cx="50" cy="30" r="13" fill="#C8744B"/>
+  <path d="M0 100V78C0 78 22 70 50 70C78 70 100 78 100 78V100Z" fill="#3C6B45"/>
+  <path d="M6 100V85C6 85 26 79 50 79C74 79 94 85 94 85V100Z" fill="#4F7A4A"/>
+  <path d="M14 100V92C14 92 30 88 50 88C70 88 86 92 86 92V100Z" fill="#75A468"/>
+  <path d="M0 78C0 78 22 70 50 70C78 70 100 78 100 78" fill="none" stroke="#F7F1E8" stroke-width="1.6" opacity=".55"/>
+  <path d="M6 85C6 85 26 79 50 79C74 79 94 85 94 85" fill="none" stroke="#F7F1E8" stroke-width="1.6" opacity=".55"/>
+</svg>
