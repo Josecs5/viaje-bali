@@ -1165,12 +1165,18 @@
     return fmtFecha(ymd(d)) + ', ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
   }
 
+  // Bloques de Datos abiertos en esta sesión. La app siempre arranca con
+  // todos plegados; lo que abras sigue abierto mientras la uses (renderDatos
+  // repinta tras cada cambio) pero no se guarda entre aperturas.
+  const openGroups = new Set();
+
   // Cabecera común de los bloques plegables de Datos: icono de color, título,
-  // contador y chevrón; recuerda abierto/cerrado en localStorage.
-  function groupShell(openKey, ico, label, countTxt, color) {
+  // contador y chevrón. Al filtrar por un solo bloque con los chips, ese
+  // bloque sale abierto.
+  function groupShell(openKey, ico, label, countTxt, color, topic) {
     const g = el('div', 'group');
     g.style.setProperty('--gc', color);
-    const isOpen = localStorage.getItem(openKey) !== '0';
+    const isOpen = openGroups.has(openKey) || selectedDatosTopic === topic;
 
     const head = el('button', 'group__head');
     head.type = 'button';
@@ -1186,7 +1192,7 @@
       const willOpen = body.hidden;
       body.hidden = !willOpen;
       head.setAttribute('aria-expanded', String(willOpen));
-      localStorage.setItem(openKey, willOpen ? '1' : '0');
+      if (willOpen) openGroups.add(openKey); else openGroups.delete(openKey);
     });
 
     g.append(head, body);
@@ -1199,7 +1205,7 @@
   function checklistBlock(cfg) {
     const items = state[cfg.col];
     const done = items.filter(x => x[cfg.doneKey]).length;
-    const { g, body } = groupShell(cfg.openKey, cfg.ico, cfg.label, `${done}/${items.length}`, cfg.color);
+    const { g, body } = groupShell(cfg.openKey, cfg.ico, cfg.label, `${done}/${items.length}`, cfg.color, cfg.topic);
 
     if (!items.length) {
       const e = el('div', 'empty');
@@ -1263,7 +1269,7 @@
 
   function equipajeBlock() {
     return checklistBlock({
-      col: 'equipaje', openKey: 'open_equipaje', ico: '🎒', label: 'Equipaje', color: 'var(--terracota)',
+      col: 'equipaje', openKey: 'open_equipaje', topic: 'equipaje', ico: '🎒', label: 'Equipaje', color: 'var(--terracota)',
       doneKey: 'packed',
       newItem: texto => ({ id: uid(), texto, cat: 'Otros', packed: false })
     });
@@ -1273,7 +1279,7 @@
   // tareas con anchor (ver anteFechaTxt).
   function antesDeViajarBlock() {
     return checklistBlock({
-      col: 'antesDeViajar', openKey: 'open_antes', ico: '✅', label: 'Antes de viajar', color: 'var(--arrozal)',
+      col: 'antesDeViajar', openKey: 'open_antes', topic: 'antes', ico: '✅', label: 'Antes de viajar', color: 'var(--arrozal)',
       doneKey: 'hecho',
       extra: it => {
         const f = it.anchor ? anteFechaTxt(it.anchor) : '';
@@ -1318,7 +1324,7 @@
   function groupEl(col, label, summarize) {
     const items = state[col];
     const kind = KIND_OF[col];
-    const { g, body } = groupShell('open_' + col, SCHEMAS[kind].icon, label, items.length, GROUP_COLOR[col]);
+    const { g, body } = groupShell('open_' + col, SCHEMAS[kind].icon, label, items.length, GROUP_COLOR[col], col);
 
     if (col === 'gastos') body.appendChild(gastoResumen());
 
