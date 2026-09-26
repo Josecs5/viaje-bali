@@ -1165,18 +1165,18 @@
     return fmtFecha(ymd(d)) + ', ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
   }
 
-  // Bloques de Datos abiertos en esta sesión. La app siempre arranca con
-  // todos plegados; lo que abras sigue abierto mientras la uses (renderDatos
-  // repinta tras cada cambio) pero no se guarda entre aperturas.
+  // Bloques plegables (Datos y Consejos) abiertos en esta sesión. La app
+  // siempre arranca con todos plegados; lo que abras sigue abierto mientras
+  // la uses (se repinta tras cada cambio) pero no se guarda entre aperturas.
   const openGroups = new Set();
 
-  // Cabecera común de los bloques plegables de Datos: icono de color, título,
-  // contador y chevrón. Al filtrar por un solo bloque con los chips, ese
-  // bloque sale abierto.
-  function groupShell(openKey, ico, label, countTxt, color, topic) {
+  // Cabecera común de los bloques plegables de Datos y Consejos: icono de
+  // color, título, contador y chevrón. forceOpen: el bloque sale abierto
+  // (al filtrar por él con los chips).
+  function groupShell(openKey, ico, label, countTxt, color, forceOpen) {
     const g = el('div', 'group');
     g.style.setProperty('--gc', color);
-    const isOpen = openGroups.has(openKey) || selectedDatosTopic === topic;
+    const isOpen = openGroups.has(openKey) || !!forceOpen;
 
     const head = el('button', 'group__head');
     head.type = 'button';
@@ -1205,7 +1205,7 @@
   function checklistBlock(cfg) {
     const items = state[cfg.col];
     const done = items.filter(x => x[cfg.doneKey]).length;
-    const { g, body } = groupShell(cfg.openKey, cfg.ico, cfg.label, `${done}/${items.length}`, cfg.color, cfg.topic);
+    const { g, body } = groupShell(cfg.openKey, cfg.ico, cfg.label, `${done}/${items.length}`, cfg.color, selectedDatosTopic === cfg.topic);
 
     if (!items.length) {
       const e = el('div', 'empty');
@@ -1324,7 +1324,7 @@
   function groupEl(col, label, summarize) {
     const items = state[col];
     const kind = KIND_OF[col];
-    const { g, body } = groupShell('open_' + col, SCHEMAS[kind].icon, label, items.length, GROUP_COLOR[col], col);
+    const { g, body } = groupShell('open_' + col, SCHEMAS[kind].icon, label, items.length, GROUP_COLOR[col], selectedDatosTopic === col);
 
     if (col === 'gastos') body.appendChild(gastoResumen());
 
@@ -1997,7 +1997,7 @@
     if (avgCloud != null && avgCloud >= 60) fac.push(`nubes ${Math.round(avgCloud)}%`);
     if (pSum >= 1) fac.push(`${pSum.toLocaleString('es-ES', { maximumFractionDigits: pSum < 10 ? 1 : 0 })} mm`);
     const cola = fac.length ? ': ' + fac.join(' · ') : '';
-    let txt = level === 'malo' ? 'día de plan B' + cola + ' — alternativas en Transporte y guías'
+    let txt = level === 'malo' ? 'día de plan B' + cola + ' — alternativas en Consejos'
       : level === 'regular' ? 'día irregular' + cola
       : '';
 
@@ -2581,7 +2581,7 @@
   }
 
   /* ==========================================================
-     Pantalla: TRANSPORTE Y GUÍAS
+     Pantalla: CONSEJOS (transporte, comida callejera, templos, temporada...)
      ========================================================== */
   const TRANSPORTE_LOCAL = [
     { ico: '🛺', cat: 'Grab / Gojek y taxi',
@@ -2689,43 +2689,42 @@
     { key: 'planb', label: '☔ Plan B', heads: ['Plan B para días de lluvia fuerte'] },
     { key: 'dinero', label: '💸 Dinero', heads: ['Dinero: trucos en IDR'] },
     { key: 'tuyas', label: '✍️ Tuyas', heads: ['Tus recomendaciones'] },
-    { key: 'telefonos', label: '📞 Teléfonos', heads: ['Teléfonos importantes en Bali', 'Emergencias', 'Consulado'] }
+    { key: 'telefonos', label: '📞 Teléfonos', heads: ['Teléfonos importantes'] }
   ];
   const HEAD_TO_GUIA_TOPIC = {};
   GUIA_TOPICS.forEach(t => t.heads.forEach(h => { HEAD_TO_GUIA_TOPIC[h] = t.key; }));
 
-  function guiaSection(ico, cat, items) {
-    const sec = el('section', 'reco-cat');
-    sec.innerHTML =
-      `<div class="reco-cat__head">` +
-      `<span class="reco-cat__badge">${esc(ico)}</span>` +
-      `<h3>${esc(cat)}</h3>` +
-      `</div>` +
+  // Color de cada bloque de Consejos (franja de las tarjetas y fondo del icono)
+  const GUIA_COLORS = ['var(--terracota)', 'var(--turquesa)', 'var(--arrozal)', 'var(--arena-deep)'];
+
+  // Bloque plegable de Consejos. topic: clave de GUIA_TOPICS para los chips.
+  function guiaGroup(topic, ico, label, countTxt, color) {
+    const { g, body } = groupShell('guia_' + label, ico, label, countTxt, color, selectedGuiaTopic === topic);
+    g.classList.add('guia-group');
+    g.style.setProperty('--rc', color);
+    g.hidden = selectedGuiaTopic !== 'all' && selectedGuiaTopic !== topic;
+    return { g, body };
+  }
+
+  function guiaSection(topic, ico, cat, items, color) {
+    const { g, body } = guiaGroup(topic, ico, cat, items.length, color);
+    body.innerHTML =
       `<div class="reco-cat__list">` +
       items.map(t => `<div class="reco-card">${esc(t)}</div>`).join('') +
       `</div>`;
-    return sec;
+    return g;
   }
 
-  function renderEmergenciasBali(body) {
-    const lead = el('section', 'reco-cat emerg-lead');
-    lead.innerHTML =
-      `<div class="reco-cat__head">` +
-      `<span class="reco-cat__badge">📞</span>` +
-      `<h3>Teléfonos importantes en Bali</h3>` +
-      `</div>` +
-      `<p class="emerg-intro">Pulsa un número para llamar.</p>`;
-    body.appendChild(lead);
-
-    EMERGENCIAS_BALI.forEach(g => {
-      const sec = el('section', 'reco-cat emerg-cat');
-      sec.innerHTML =
-        `<div class="reco-cat__head">` +
-        `<span class="reco-cat__badge">${esc(g.ico || '•')}</span>` +
-        `<h3>${esc(g.cat)}</h3>` +
-        `</div>` +
+  // Un solo bloque con todos los teléfonos, subdividido por tipo.
+  function emergenciasGroup() {
+    const total = EMERGENCIAS_BALI.reduce((n, grp) => n + grp.items.length, 0);
+    const { g, body } = guiaGroup('telefonos', '📞', 'Teléfonos importantes', total, 'var(--danger)');
+    body.innerHTML =
+      `<p class="emerg-intro">Pulsa un número para llamar.</p>` +
+      EMERGENCIAS_BALI.map(grp =>
+        `<h4 class="guia-sub">${esc(grp.ico || '•')} ${esc(grp.cat)}</h4>` +
         `<div class="reco-cat__list">` +
-        g.items.map(it => {
+        grp.items.map(it => {
           const num = it.tel
             ? `<a class="emerg-num" href="tel:${esc(it.tel.replace(/\s+/g, ''))}">${esc(it.tel)}</a>`
             : '';
@@ -2734,9 +2733,9 @@
             (it.d ? `<p class="emerg-note">${esc(it.d)}</p>` : '') +
             `</div>`;
         }).join('') +
-        `</div>`;
-      body.appendChild(sec);
-    });
+        `</div>`
+      ).join('');
+    return g;
   }
 
   const RECO_CAT_ICO = { Ver: '👁️', Hacer: '🎯', Comer: '🍴', Comprar: '🛍️', Consejo: '💬', Otro: '📌' };
@@ -2762,50 +2761,42 @@
     GUIA_TOPICS.forEach(t => chips.appendChild(guiaChip(t.key, t.label)));
     body.appendChild(chips);
 
-    TRANSPORTE_LOCAL.forEach(g => body.appendChild(guiaSection(g.ico, g.cat, g.items)));
-    body.appendChild(guiaSection('🍜', 'Comida callejera', COMIDA_CALLEJERA.items));
-    body.appendChild(guiaSection('🙏', 'Templos: etiqueta básica', TEMPLOS_ETIQUETA.items));
-    body.appendChild(guiaSection('🌧️', 'Temporada por región', TEMPORADA_BALI.items));
-    body.appendChild(guiaSection('☔', 'Plan B para días de lluvia fuerte', PLAN_B_BALI.items));
-    body.appendChild(guiaSection('💸', 'Dinero: trucos en IDR', DINERO_BALI.items));
+    const secciones = [
+      ...TRANSPORTE_LOCAL,
+      { ico: '🍜', cat: 'Comida callejera', items: COMIDA_CALLEJERA.items },
+      { ico: '🙏', cat: 'Templos: etiqueta básica', items: TEMPLOS_ETIQUETA.items },
+      { ico: '🌧️', cat: 'Temporada por región', items: TEMPORADA_BALI.items },
+      { ico: '☔', cat: 'Plan B para días de lluvia fuerte', items: PLAN_B_BALI.items },
+      { ico: '💸', cat: 'Dinero: trucos en IDR', items: DINERO_BALI.items }
+    ];
+    secciones.forEach((sec, i) => body.appendChild(
+      guiaSection(HEAD_TO_GUIA_TOPIC[sec.cat], sec.ico, sec.cat, sec.items, GUIA_COLORS[i % GUIA_COLORS.length])));
 
-    const mine = el('section', 'reco-cat reco-cat--mine');
-    mine.innerHTML =
-      `<div class="reco-cat__head">` +
-      `<span class="reco-cat__badge">✍️</span>` +
-      `<h3>Tus recomendaciones</h3>` +
-      `</div>`;
-
+    const recos = state.recomendaciones;
+    const mine = guiaGroup('tuyas', '✍️', 'Tus recomendaciones', recos.length, 'var(--arena-deep)');
     const list = el('div', 'reco-cat__list');
-    if (!state.recomendaciones.length) {
+    if (!recos.length) {
       const e = el('p', 'reco-empty');
       e.textContent = 'Apunta aquí cosas que te recomienden o que quieras hacer durante el viaje.';
       list.appendChild(e);
     } else {
-      state.recomendaciones.forEach(it => {
+      recos.forEach(it => {
         const c = itemCard('recomendacion', it, recoSummary(it), true);
         c.classList.add('reco-usercard');
         list.appendChild(c);
       });
     }
-    mine.appendChild(list);
+    mine.body.appendChild(list);
 
     const add = el('button', 'btn btn--accent btn--block');
     add.type = 'button';
     add.innerHTML = ICON.plus + ' Añadir recomendación';
     add.style.marginTop = 'var(--space-12)';
     add.addEventListener('click', () => openSheet('recomendacion'));
-    mine.appendChild(add);
+    mine.body.appendChild(add);
+    body.appendChild(mine.g);
 
-    body.appendChild(mine);
-
-    renderEmergenciasBali(body);
-
-    [...body.querySelectorAll('.reco-cat')].forEach(sec => {
-      const h3 = sec.querySelector('h3');
-      const key = h3 && HEAD_TO_GUIA_TOPIC[h3.textContent];
-      sec.hidden = selectedGuiaTopic !== 'all' && selectedGuiaTopic !== key;
-    });
+    body.appendChild(emergenciasGroup());
   }
 
   /* ==========================================================
