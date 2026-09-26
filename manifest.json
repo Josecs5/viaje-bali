@@ -9,8 +9,8 @@
   "id": "/viaje-bali/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#F7F1E8",
-  "theme_color": "#1F3B2D",
+  "background_color": "#F8F7F0",
+  "theme_color": "#173A2A",
   "categories": ["travel", "productivity", "lifestyle"],
   "icons": [
     {
