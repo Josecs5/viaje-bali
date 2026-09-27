@@ -2378,21 +2378,49 @@
   const ATTR_MAPA = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>';
 
   // Tiles claros de CARTO (el CSS los tiñe de lavanda). CARTO es un servicio
-  // gratuito compartido y a veces da 503: tras varios fallos cambia a OSM.
+  // gratuito compartido y a veces da 503 o no responde. Leaflet no reintenta
+  // una tesela fallida (se queda en blanco hasta mover el mapa), así que se
+  // reintenta una vez; si vuelve a fallar, todos los mapas pasan a OSM y los
+  // que se creen después ya nacen con OSM.
+  let cartoKo = false;
+  let cartoLayers = [];   // capas de CARTO en uso, para cambiarlas todas a la vez
+
+  function osmTiles() {
+    return L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19, crossOrigin: 'anonymous',
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    });
+  }
+
+  function fallbackToOsm() {
+    if (cartoKo) return;
+    cartoKo = true;
+    cartoLayers.forEach(layer => {
+      const map = layer._map;   // null si el mapa ya se destruyó
+      if (!map) return;
+      map.removeLayer(layer);
+      osmTiles().addTo(map);
+    });
+    cartoLayers = [];
+  }
+
   function addBaseTiles(map) {
+    if (cartoKo) { osmTiles().addTo(map); return; }
     const carto = L.tileLayer('https://{s}.basemap.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png', {
       subdomains: 'abcd', maxZoom: 19, crossOrigin: 'anonymous', attribution: ATTR_MAPA
     });
-    let errs = 0, fallenBack = false;
-    carto.on('tileerror', () => {
-      if (fallenBack || ++errs < 4) return;
-      fallenBack = true;
-      map.removeLayer(carto);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19, crossOrigin: 'anonymous',
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-      }).addTo(map);
+    carto.on('tileerror', e => {
+      const img = e.tile;
+      if (img.dataset.retry) { fallbackToOsm(); return; }
+      img.dataset.retry = '1';
+      setTimeout(() => {
+        // La tesela pudo descartarse (zoom, pan, mapa destruido) mientras tanto
+        if (cartoKo || !carto._map || !img.parentNode) return;
+        img.src = img.src.split('?')[0] + '?retry=1';
+      }, 700);
     });
+    cartoLayers = cartoLayers.filter(l => l._map);
+    cartoLayers.push(carto);
     carto.addTo(map);
   }
 
