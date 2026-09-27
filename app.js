@@ -2088,9 +2088,8 @@
     if (pts.length) {
       const row = el('div', 'day__actions');
       const g = mapsLink('g', pts); g.textContent = 'Google Maps';
-      const a = mapsLink('a', pts); a.textContent = 'Apple Maps';
       const w = mapsLink('w', pts); w.textContent = 'Waze';
-      row.append(g, a, w);
+      row.append(g, w);
       wrap.appendChild(row);
     }
 
@@ -2158,9 +2157,8 @@
     if (it.loc && it.loc.lat != null) {
       const nav = el('div', 'slot__nav');
       const g = mapsLink('g', [it.loc]); g.className = 'slot__go'; g.textContent = 'Google Maps ›';
-      const a = mapsLink('a', [it.loc]); a.className = 'slot__go'; a.textContent = 'Apple Maps ›';
       const w = mapsLink('w', [it.loc]); w.className = 'slot__go'; w.textContent = 'Waze ›';
-      nav.append(g, a, w);
+      nav.append(g, w);
       body.appendChild(nav);
     }
     r.append(time, body);
@@ -2192,8 +2190,8 @@
   }
 
   /* ==========================================================
-     Enlaces a Google Maps / Apple Maps / Waze
-     provider: 'g' = Google · 'a' = Apple · 'w' = Waze
+     Enlaces a Google Maps / Waze
+     provider: 'g' = Google · 'w' = Waze
      ========================================================== */
   function gmapsHref(pts) {
     const P = (pts || []).filter(p => p && p.lat != null);
@@ -2207,6 +2205,8 @@
       (w ? `&waypoints=${encodeURIComponent(w)}` : '');
   }
 
+  const wazeHref = p => `https://waze.com/ul?ll=${p.lat},${p.lng}&navigate=yes`;
+
   function mapsLink(provider, pts) {
     const a = el('a', 'btn btn--ghost btn--sm');
     a.target = '_blank';
@@ -2215,22 +2215,12 @@
 
     if (provider === 'w') {
       // Waze no admite rutas con varias paradas: navega al destino final.
-      const d = P[P.length - 1] || P[0];
-      a.href = d ? `https://waze.com/ul?ll=${d.lat},${d.lng}&navigate=yes` : '#';
+      const d = P[P.length - 1];
+      a.href = d ? wazeHref(d) : '#';
       return a;
     }
 
-    if (provider === 'g') {
-      a.href = gmapsHref(P);
-    } else {
-      if (P.length <= 1) {
-        const p = P[0];
-        a.href = p ? `https://maps.apple.com/?ll=${p.lat},${p.lng}&q=${encodeURIComponent('Punto')}` : '#';
-      } else {
-        const o = P[0], d = P[P.length - 1];
-        a.href = `https://maps.apple.com/?dirflg=d&saddr=${o.lat},${o.lng}&daddr=${d.lat},${d.lng}`;
-      }
-    }
+    a.href = gmapsHref(P);
     return a;
   }
 
@@ -2268,7 +2258,10 @@
   ];
 
   const gmapsSearchHref = q => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
-  const appleMapsSearchHref = q => `https://maps.apple.com/?q=${encodeURIComponent(q)}`;
+  // Waze navega a las coordenadas del sitio; si no las tiene, lo busca por nombre.
+  const wazeVenueHref = (v, q) => v.loc && v.loc.lat != null
+    ? wazeHref(v.loc)
+    : `https://waze.com/ul?q=${encodeURIComponent(q)}&navigate=yes`;
 
   // Distancia en línea recta desde el alojamiento de esa zona (mismo cálculo
   // que usa el Itinerario para los trayectos entre paradas).
@@ -2318,7 +2311,7 @@
       `<div class="venue__go">` +
       (v.loc ? `<button class="reco-link reco-link--map" type="button" data-pin>${ICON.locate} Ver en el mapa</button>` : '') +
       `<a class="reco-link" href="${esc(gmapsSearchHref(q))}" target="_blank" rel="noopener">Google Maps</a>` +
-      `<a class="reco-link" href="${esc(appleMapsSearchHref(q))}" target="_blank" rel="noopener">Apple Maps</a>` +
+      `<a class="reco-link" href="${esc(wazeVenueHref(v, q))}" target="_blank" rel="noopener">Waze</a>` +
       (v.web ? `<a class="reco-link" href="${esc(v.web)}" target="_blank" rel="noopener">Más información</a>` : '') +
       `</div></div>`;
     w.querySelectorAll('.venue__n, [data-pin]').forEach(b => b.addEventListener('click', () => selectVenue(key, n)));

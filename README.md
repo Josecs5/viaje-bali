@@ -20,7 +20,7 @@ UTC+8), con la acción concreta. La pestaña **Dónde comer** reúne sitios
 bien valorados cerca de cada alojamiento (Bali no está cubierta por la Guía
 Michelin), con la distancia en línea recta desde el alojamiento, el precio
 orientativo, un mapa por zona (Leaflet) y enlace directo a Google Maps y
-Apple Maps. La pestaña **Espectáculos** reúne la danza tradicional de Ubud
+Waze. La pestaña **Espectáculos** reúne la danza tradicional de Ubud
 Palace y el Kecak de Uluwatu Temple, cerca de cada alojamiento, con qué
 noche de la estancia encaja. Datos incluye una checklist de **tareas antes
 de viajar** (e-VOA, Bali Tourist Levy, All Indonesia Arrival Card, validez
