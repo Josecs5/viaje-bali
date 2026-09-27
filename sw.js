@@ -5,7 +5,7 @@
  */
 'use strict';
 
-const SHELL_CACHE = 'shell-v6';
+const SHELL_CACHE = 'shell-v7';
 // Solo se tocan las cachés de este proyecto: en GitHub Pages el origen es
 // compartido con otros proyectos del usuario y caches.keys() no está acotado
 // por scope.
@@ -14,7 +14,7 @@ const OWNED_CACHE = /^shell-v\d+$/;
 const SHELL_ASSETS = [
   './',                       // redundante a propósito (red de seguridad);
   './index.html',             // la navegación resuelve contra './index.html'.
-  './style.css?v=5',
+  './style.css?v=6',
   './app.js?v=6',
   './manifest.json',
   './icons/icon-192.png',
@@ -22,6 +22,7 @@ const SHELL_ASSETS = [
   './icons/icon-maskable-512.png',
   './icons/apple-touch-icon.png',
   './icons/icon.svg',
+  './icons/aksara-bali.svg',
   './vendor/leaflet/leaflet.js',
   './vendor/leaflet/leaflet.css',
   './vendor/leaflet/images/marker-icon.png',
@@ -31,9 +32,9 @@ const SHELL_ASSETS = [
   './vendor/leaflet/images/layers-2x.png',
   './vendor/suncalc/suncalc.js',
   './vendor/fonts/fonts.css',
-  './vendor/fonts/instrument-serif-latin.woff2',
-  './vendor/fonts/instrument-serif-latin-italic.woff2',
-  './vendor/fonts/plus-jakarta-sans-latin.woff2'
+  './vendor/fonts/fraunces-soft-latin.woff2',
+  './vendor/fonts/fraunces-soft-latin-italic.woff2',
+  './vendor/fonts/gantari-latin.woff2'
 ];
 
 self.addEventListener('install', event => {

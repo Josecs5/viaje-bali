@@ -1,8 +1,15 @@
 /* Tipografías propias, servidas desde el repo (funciona sin conexión).
- * Instrument Serif: titulares editoriales. Plus Jakarta Sans (Tokotype,
- * fundición indonesia): texto, botones y cifras. Ambas con licencia SIL OFL.
- * plus-jakarta-sans-latin.woff2 lleva el espacio ensanchado de 170 a 240
- * unidades (el original junta las palabras a tamaño de texto). */
-@font-face{font-family:'Instrument Serif';font-style:normal;font-weight:400;font-display:swap;src:url('instrument-serif-latin.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:'Instrument Serif';font-style:italic;font-weight:400;font-display:swap;src:url('instrument-serif-latin-italic.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:'Plus Jakarta Sans';font-style:normal;font-weight:200 800;font-display:swap;src:url('plus-jakarta-sans-latin.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+ * Fraunces (Undercase Type): titulares. Eje SOFT fijado al máximo, que
+ * redondea las terminaciones como las letras talladas en madera de los
+ * rótulos de warungs y homestays; la redonda con WONK 0 y la cursiva con
+ * WONK 1 (sus n/m/h inclinadas, de trazo más manual). Óptica automática
+ * (opsz 9–144) y peso variable 300–700.
+ * Gantari (Lafontype, fundición indonesia): texto, botones y cifras.
+ * Peso variable 300–800.
+ * Ambas con licencia SIL OFL 1.1 (OFL-*.txt). Se generan desde los TTF
+ * variables de github.com/google/fonts con fontTools: instancer para fijar
+ * ejes y recortar pesos, y subset al bloque latino (mismo unicode-range que
+ * Google Fonts), conservando todas las features OpenType. */
+@font-face{font-family:'Fraunces';font-style:normal;font-weight:300 700;font-display:swap;src:url('fraunces-soft-latin.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Fraunces';font-style:italic;font-weight:300 700;font-display:swap;src:url('fraunces-soft-latin-italic.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Gantari';font-style:normal;font-weight:300 800;font-display:swap;src:url('gantari-latin.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}

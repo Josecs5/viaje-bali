@@ -35,13 +35,16 @@
   <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 
-  <!-- Fuentes (local) -->
+  <!-- Fuentes (local). Las dos que pinta la primera pantalla se piden ya,
+       sin esperar a que se lea el CSS. -->
+  <link rel="preload" href="vendor/fonts/fraunces-soft-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="vendor/fonts/gantari-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="vendor/fonts/fonts.css">
 
   <!-- Leaflet (local) — mapas pequeños de la pestaña "Comer" -->
   <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
 
-  <link rel="stylesheet" href="style.css?v=5">
+  <link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
 

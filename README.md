@@ -54,12 +54,12 @@ comer, espectáculos) se recalcula solo.
 | Archivo | Contenido |
 |---|---|
 | `index.html` | Estructura y meta tags PWA/iOS |
-| `style.css` | Tema "selva e hibisco" (crema, verde selva, hibisco y mango, caléndula, arrozal y turquesa), con modo claro y oscuro; responsive y autónomo |
+| `style.css` | Tema "selva e hibisco" (crema, verde selva, hibisco y mango, caléndula, arrozal y turquesa), con modo claro y oscuro; responsive y autónomo. Titulares en Fraunces (versión "soft", como letra tallada en madera) y texto en Gantari (fundición indonesia Lafontype); el sol de la cabecera lleva «Bali» en aksara Bali |
 | `app.js` | Lógica: CRUD, motor de itinerario, dónde comer, espectáculos y consejos |
 | `sw.js` | Service worker: precache del shell |
-| `vendor/` | Leaflet 1.9.4, SunCalc 1.9.0 y fuentes web (Instrument Serif y Plus Jakarta Sans) servidos desde el repo |
+| `vendor/` | Leaflet 1.9.4, SunCalc 1.9.0 y fuentes web (Fraunces y Gantari, variables, con su licencia OFL) servidos desde el repo |
 | `manifest.json` | Manifiesto PWA |
-| `icons/` | Iconos 192 / 512 / maskable + apple-touch-icon + SVG |
+| `icons/` | Iconos 192 / 512 / maskable + apple-touch-icon + SVG, y `aksara-bali.svg` («Bali» en escritura balinesa, trazado de Noto Serif Balinese) |
 
 Solo HTML, CSS y JavaScript. Sin frameworks. Service worker para uso sin
 conexión; Leaflet, SunCalc y las fuentes van incluidos en el repo.
